@@ -4,6 +4,7 @@
 import argparse
 import configparser
 import io
+import os
 import sys
 import time
 from typing import Generator
@@ -156,6 +157,15 @@ def main():
         default=False,
         help="if set, skip waiting for completion and only print the analysis links",
     )
+    parser.add_argument(
+        "-n",
+        "--include-file-names",
+        dest="include_names",
+        action="store_true",
+        default=False,
+        help="if set, include file name when submitting",
+    )
+
     decoders.InputTypeDecoder.add_arguments_to_parser(
         parser=parser,
         choices=[
@@ -222,6 +232,7 @@ def main():
                     bypass_cache=args.bypass_cache,
                     bypass_prefilter=args.bypass_prefilter,
                     delete_after_analysis=args.delete_after_analysis,
+                    file_name=os.path.basename(file_path) if args.include_names else None,
                 )
                 submissions.append(ret)
                 task_to_source[ret["task_uuid"]] = file_path
